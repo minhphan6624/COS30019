@@ -1,5 +1,7 @@
 import sys
 
+from ClassDef import *
+
 filename = sys.argv[1]
 # strategy = sys.argv[2]
 
@@ -29,9 +31,16 @@ def parse_input_file(filename):
         return m, n, init_pos, goal_pos, walls
 
 
-m, n, start_position, goal_positions, walls = parse_input_file(filename)
+m, n, start_pos, goal_pos, walls = parse_input_file(filename)
+
+def runRobotNav():
+    #Initialize the problem
+    problem = RobotNavProblem(initial = start_pos, goal = goal_pos)
+
+
+
 
 print(f"Grid Size: {m}x{n}")
-print(f"Start Position: {start_position}")
-print(f"Goal Positions: {goal_positions}")
+print(f"Start Position: {start_pos}")
+print(f"Goal Positions: {goal_pos}")
 print(f"Walls: {walls}")
