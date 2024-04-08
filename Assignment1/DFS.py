@@ -1,3 +1,8 @@
+import utils
+
+from collections import deque
+from ClassDef import *
+
 def depth_first_tree_search(problem):
     frontier = [Node(problem.initial)]  # Stack
 

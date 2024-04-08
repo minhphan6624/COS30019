@@ -21,18 +21,23 @@ class Node:
 
     def __lt__(self, node):
         return self.state < node.state
+    
+    def __eq__(self, other):
+        return isinstance(other, Node) and self.state == other.state
 
-    def expand(self, problem):
-        """List the nodes reachable in one step from this node."""
-        return [self.child_node(problem, action)
-                for action in problem.actions(self.state)]
+    def __hash__(self):
+        return hash(self.state)
 
     def child_node(self, problem, action):
-        """[Figure 3.10]"""
         next_state = problem.result(self.state, action)
         next_node = Node(next_state, self, action, problem.path_cost(
             self.path_cost, self.state, action, next_state))
         return next_node
+    
+    def expand(self, problem):
+        """List the nodes reachable in one step from this node."""
+        return [self.child_node(problem, action)
+                for action in problem.actions(self.state)]
 
     def solution(self):
         """Return the sequence of actions to go from the root to this node."""
@@ -45,11 +50,7 @@ class Node:
             path_back.append(node)
             node = node.parent
         return list(reversed(path_back))
-    def __eq__(self, other):
-        return isinstance(other, Node) and self.state == other.state
-
-    def __hash__(self):
-        return hash(self.state)
+    
 
 class Problem:
     def __init__(self, initial, goal=None):
@@ -76,16 +77,44 @@ class Problem:
 
 
 class RobotNavProblem(Problem):
-    def __init__(self, initial, goal):
+    def __init__(self, initial, goal, walls, grid_h, grid_w):
         super().__init__(initial, goal)
-
-    
+        self.walls = walls
+        self.grid_w = grid_w
+        self.grid_h = grid_h
+        self.curr_pos = self.initial
 
     def actions(self, state):
         possible_actions = ['UP', 'LEFT', 'DOWN', 'RIGHT']
 
+        #Blocks on the left most cannot move further left
+        if (self.curr_pos[0] == 0):
+            possible_actions.remove('LEFT')
+
+        #Blocks on the right most cannot move further right
+        if (self.curr_pos[0] == self.grid_w - 1):
+            possible_actions.remove('RIGHT')
+
+        #Blocks at the top cannot move further up
+        if (self.curr_pos[1] == 0):
+            possible_actions.remove('UP')
+
+        #Blocks at the bottom most cannot move further down
+        if (self.curr_pos[1] == self.grid_h - 1):
+            possible_actions.remove('DOWN')
+
+        return possible_actions
+
     def result(self, state, action):
-        return super().result(state, action)
+        x, y = self.curr_pos[0], self.curr_pos[1]
+        if (action == "UP"):
+            return (x, y+1)  
+        elif (action == "DOWN"):
+            return (x, y+1)  
+        elif (action == "LEFT"):
+            return (x-1, y)  
+        elif (action == "RIGHT"):
+            return (x+1, y)    
         
     def goal_test(self, state):
         return state == self.goal

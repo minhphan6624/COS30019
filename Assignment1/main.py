@@ -1,16 +1,18 @@
 import sys
 
 from ClassDef import *
+from BFS import *
+from DFS import *
 
 filename = sys.argv[1]
-# strategy = sys.argv[2]
+strategy = sys.argv[2]
 
 
 def parse_input_file(filename):
     with open(filename, 'r') as f:
         # Read map size
         map_size = f.readline().strip().strip('[]').split(',')
-        m, n = int(map_size[0]), int(map_size[1])
+        height, width = int(map_size[0]), int(map_size[1])
 
         # Read start position
         init_pos = f.readline().strip().strip('()').split(',')
@@ -25,22 +27,61 @@ def parse_input_file(filename):
         walls = []  # Array of walls
         for line in f:
             parts = line.strip().strip("()").split(',')
-            walls.append((int(parts[0]), int(parts[1]),
-                         int(parts[2]), int(parts[3])))
+            w,h =  int(parts[2]), int(parts[3])
 
-        return m, n, init_pos, goal_pos, walls
+            x,y = int(parts[0]), int(parts[1])
+            for i in range(0, w):
+                for j in range(0, h):
+                    wall_block = (x + i,y+j)
+
+                    # If the block is the goal or already checked as a wall
+                    # if (wall_block in goal_pos or wall_block in walls):
+                    #     continue
+                    # else:
+                    walls.append(wall_block)
+                
+
+        return height, width, init_pos, goal_pos, walls
 
 
-m, n, start_pos, goal_pos, walls = parse_input_file(filename)
+height, width, init_pos, goal_pos, walls = parse_input_file(filename)
 
 def runRobotNav():
     #Initialize the problem
-    problem = RobotNavProblem(initial = start_pos, goal = goal_pos)
+    problem = RobotNavProblem(initial = init_pos, goal = goal_pos, walls=walls, 
+                              grid_h=height, grid_w = width)
 
+    if strategy == "BFS":
+        result = breadth_first_tree_search(problem)
 
+        print(filename + " ")
+        print(strategy + "\n")
 
+        path = result.solution()
+        
+        print(result + " " + len(path))
+        print(path)
+        
 
-print(f"Grid Size: {m}x{n}")
-print(f"Start Position: {start_pos}")
-print(f"Goal Positions: {goal_pos}")
-print(f"Walls: {walls}")
+    if strategy == "DFS":
+        result = depth_first_tree_search(problem)
+
+        print(filename + " ")
+        print(strategy + "\n")
+
+        path = result.solution()
+        
+        print(result + " " + len(path))
+        print(path)
+    if strategy == "G_BEST":
+        print ("Greedy Best-First Search")
+    if strategy == "A_STAR":
+        print ("A* Search")
+
+    
+
+# print(f"Grid Size: {height}x{width}")
+# print(f"Start Position: {init_pos}")
+# print(f"Goal Positions: {goal_pos}")
+# print(f"Walls: {walls}")
+runRobotNav()
