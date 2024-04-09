@@ -1,3 +1,6 @@
+from utils import *
+
+
 class Problem:
     def __init__(self, initial, goal):
         self.initial = initial
@@ -42,11 +45,8 @@ class RobotNavProblem(Problem):
     def goal_test(self, state):
         return super().goal_test(state)
 
-    def is_wall(self, state):
-        if self.grid[state(1)][state(0)] == -1:
-            return True
-        else:
-            return False
+    def h(self, state):
+        pass
 
 
 class Node:

@@ -99,7 +99,8 @@ class Node:
     def child_node(self, problem, action):
         """[Figure 3.10]"""
         next_state = problem.result(self.state, action)
-        next_node = Node(next_state, self, action, problem.path_cost(self.path_cost, self.state, action, next_state))
+        next_node = Node(next_state, self, action, problem.path_cost(
+            self.path_cost, self.state, action, next_state))
         return next_node
 
     def solution(self):
@@ -147,7 +148,8 @@ def best_first_graph_search(problem, f, display=False):
         node = frontier.pop()
         if problem.goal_test(node.state):
             if display:
-                print(len(explored), "paths have been expanded and", len(frontier), "paths remain in the frontier")
+                print(len(explored), "paths have been expanded and",
+                      len(frontier), "paths remain in the frontier")
             return node
         explored.add(node.state)
         for child in node.expand(problem):
@@ -178,7 +180,7 @@ def astar_search(problem, h=None, display=False):
 
 
 # ______________________________________________________________________________
-# A* heuristics 
+# A* heuristics
 
 class EightPuzzle(Problem):
     """ The problem of sliding tiles numbered from 1 to 8 on a 3x3 board, where one of the
@@ -253,7 +255,6 @@ class EightPuzzle(Problem):
 # ______________________________________________________________________________
 
 
-
 # ______________________________________________________________________________
 # Graphs and Graph Problems
 
@@ -308,7 +309,8 @@ class Graph:
     def nodes(self):
         """Return a list of nodes in the graph."""
         s1 = set([k for k in self.graph_dict.keys()])
-        s2 = set([k2 for v in self.graph_dict.values() for k2, v2 in v.items()])
+        s2 = set([k2 for v in self.graph_dict.values()
+                 for k2, v2 in v.items()])
         nodes = s1.union(s2)
         return list(nodes)
 
@@ -416,10 +418,11 @@ class GraphProblem(Problem):
 
 def run8Puzzle():
     # Let's start with an 8-Puzzle probelm
-    prob1 = EightPuzzle(initial=(2, 0, 3, 1, 4, 5, 7, 8, 6), goal=(1, 2, 3, 4, 5, 6, 7, 8, 0))
+    prob1 = EightPuzzle(initial=(2, 0, 3, 1, 4, 5, 7, 8, 6),
+                        goal=(1, 2, 3, 4, 5, 6, 7, 8, 0))
     result = astar_search(prob1, display=True)
     print(result)
-    path =[]
+    path = []
     pNode = result
     while pNode.parent:
         path.insert(0, pNode.action)
@@ -430,7 +433,7 @@ def run8Puzzle():
     result2 = greedy_best_first_graph_search(prob1, lambda n: prob1.h(n))
     print(result2)
 
-    path2 =[]
+    path2 = []
     pNode = result2
     while pNode.parent:
         path2.insert(0, pNode.action)
@@ -438,19 +441,21 @@ def run8Puzzle():
 
     print("8Puzzle Problem: The path from init to goal according to GBFS is: ", path2)
 
+
 def runRomania():
     # Let's start with Romania path search problem
     prob = GraphProblem('Oradea', 'Bucharest', romania_map)
     # result = depth_first_tree_search(prob)
     result = astar_search(prob)
     print(result)
-    path =[]
+    path = []
     pNode = result
     while pNode.parent:
         path.insert(0, pNode.action)
         pNode = pNode.parent
 
     print("Romania Path Finding Problem: The path from init to goal according to DFS is: ", path)
+
 
 runRomania()
 run8Puzzle()
