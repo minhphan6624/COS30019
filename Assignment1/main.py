@@ -1,18 +1,19 @@
 import sys
 
-from ClassDef import *
-from BFS import *
-from DFS import *
+from utils import *
+from classDef import *
+from uninformedSearch import *
+from informedSearch import *
 
 filename = sys.argv[1]
-strategy = sys.argv[2]
+# strategy = sys.argv[2]
 
 
 def parse_input_file(filename):
     with open(filename, 'r') as f:
         # Read map size
         map_size = f.readline().strip().strip('[]').split(',')
-        height, width = int(map_size[0]), int(map_size[1])
+        rows, cols = int(map_size[0]), int(map_size[1])
 
         # Read start position
         init_pos = f.readline().strip().strip('()').split(',')
@@ -27,61 +28,56 @@ def parse_input_file(filename):
         walls = []  # Array of walls
         for line in f:
             parts = line.strip().strip("()").split(',')
-            w,h =  int(parts[2]), int(parts[3])
+            w, h = int(parts[2]), int(parts[3])
 
-            x,y = int(parts[0]), int(parts[1])
+            x, y = int(parts[0]), int(parts[1])
             for i in range(0, w):
                 for j in range(0, h):
-                    wall_block = (x + i,y+j)
+                    wall_block = (x + i, y+j)
 
-                    # If the block is the goal or already checked as a wall
-                    # if (wall_block in goal_pos or wall_block in walls):
-                    #     continue
-                    # else:
                     walls.append(wall_block)
-                
 
-        return height, width, init_pos, goal_pos, walls
+        return rows, cols, init_pos, goal_pos, walls
 
 
-height, width, init_pos, goal_pos, walls = parse_input_file(filename)
+rows, cols, init_pos, goal_pos, walls = parse_input_file(filename)
+
+grid = [[0 for _ in range(cols)] for _ in range(rows)]
+
+grid[init_pos[1]][init_pos[0]] = 1
+
+for gx, gy in goal_pos:
+    grid[gy][gx] = 2
+
+for wx, wy in walls:
+    grid[wy][wx] = -1
+
+
+def print_grid(grid):
+    for row in grid:
+        print(row)
+
 
 def runRobotNav():
-    #Initialize the problem
-    problem = RobotNavProblem(initial = init_pos, goal = goal_pos, walls=walls, 
-                              grid_h=height, grid_w = width)
+    problem = RobotNavProblem(init_pos, goal_pos, grid)
 
-    if strategy == "BFS":
-        result = breadth_first_tree_search(problem)
+    result = depth_first_graph_search(problem)
+    # result = breadth_first_graph_search(problem)
+    # result = best_first_graph_search(problem)
 
-        print(filename + " ")
-        print(strategy + "\n")
+    delta = {
+        (0, -1): "UP",
+        (0, 1): "DOWN",
+        (-1, 0): "LEFT",
+        (1, 0): "RIGHT"
+    }
+    path = []
+    pNode = result
+    while pNode.parent:
+        path.insert(0, delta.get(pNode.action))
+        pNode = pNode.parent
+    print(path)
 
-        path = result.solution()
-        
-        print(result + " " + len(path))
-        print(path)
-        
 
-    if strategy == "DFS":
-        result = depth_first_tree_search(problem)
-
-        print(filename + " ")
-        print(strategy + "\n")
-
-        path = result.solution()
-        
-        print(result + " " + len(path))
-        print(path)
-    if strategy == "G_BEST":
-        print ("Greedy Best-First Search")
-    if strategy == "A_STAR":
-        print ("A* Search")
-
-    
-
-# print(f"Grid Size: {height}x{width}")
-# print(f"Start Position: {init_pos}")
-# print(f"Goal Positions: {goal_pos}")
-# print(f"Walls: {walls}")
+# Program execution
 runRobotNav()
