@@ -55,11 +55,10 @@ for gx, gy in goal_pos:
 for wx, wy in walls:
     grid[wy][wx] = -1
 
-
-def print_grid(grid):
-    for row in grid:
-        print(row)
-
+# # Print the grid for testing
+# def print_grid(grid):
+#     for row in grid:
+#         print(row)
 
 def runRobotNav():
     problem = RobotNavProblem(init_pos, goal_pos, grid)
@@ -69,9 +68,9 @@ def runRobotNav():
     if strategy == "DFS":
         result = depth_first_graph_search(problem)
     if strategy == "GBFS":
-        pass
+        result = best_first_graph_search(problem, lambda n: problem.h(n))
     if strategy == "AStar":
-        pass
+        result = astar_search(problem)
 
     print(filename + " " + strategy)
 
