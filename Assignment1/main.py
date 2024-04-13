@@ -4,6 +4,7 @@ from utils import *
 from classDef import *
 from uninformedSearch import *
 from informedSearch import *
+from customSearch import *
 
 filename = sys.argv[1]
 strategy = sys.argv[2]
@@ -60,6 +61,7 @@ for wx, wy in walls:
 #     for row in grid:
 #         print(row)
 
+
 def runRobotNav():
     problem = RobotNavProblem(init_pos, goal_pos, grid)
 
@@ -71,6 +73,10 @@ def runRobotNav():
         result = best_first_graph_search(problem, lambda n: problem.h(n))
     if strategy == "AStar":
         result = astar_search(problem)
+    if strategy == "IDS":
+        result = iterative_deepening_search(problem)
+    if strategy == "RBFS":
+        result = recursive_best_first_search(problem)
 
     print(filename + " " + strategy)
 
@@ -87,7 +93,7 @@ def runRobotNav():
         path = [delta.get(action) for action in result.solution()]
         print(path)
     else:
-        print("No goal is reachable")
+        print("No goal is reachable " + len(result.solution()))
 
 
 # Program execution

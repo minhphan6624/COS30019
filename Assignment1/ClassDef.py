@@ -1,5 +1,6 @@
 from utils import *
 
+
 class Problem:
     def __init__(self, initial, goal):
         self.initial = initial
@@ -49,6 +50,7 @@ class RobotNavProblem(Problem):
         for goal in self.goal:
             minn = min(minn, manhattan_distance(node.state, goal))
         return minn
+
 
 class Node:
     def __init__(self, state, parent=None, action=None, path_cost=0):
