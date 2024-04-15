@@ -5,13 +5,21 @@ class RobotNavApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Robot Navigation")
-        self.geometry("600x650")  # Adjust the size as needed
+        self.geometry("920x700")  # Adjust the size as needed
+
+        self.label = tk.Label(self, text="A simple label", font=("Arial", 11))
+        self.label.pack()
 
         self.grid_display = GridDisplay(self, 10, 10)  # 10x10 grid for example
         self.grid_display.pack()
 
         self.control_panel = ControlPanel(self)
         self.control_panel.pack()
+
+    def update_gui(self, node, status):
+        x, y = node.position
+        color = {"visited": "gray", "current": "blue", "goal": "green"}[status]
+        self.grid_display.update_cell(x, y, color)
 
 
 class GridDisplay(tk.Canvas):
@@ -51,5 +59,6 @@ class ControlPanel(tk.Frame):
         print("Reset the search and clear the grid")
 
 
-app = RobotNavApp()
-app.mainloop()
+if __name__ == "__main__":
+    app = RobotNavApp()
+    app.mainloop()

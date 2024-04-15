@@ -34,8 +34,6 @@ from utils import *
 #         bound += 1
 
 def depth_limited_search(problem, limit=50):
-    """[Figure 3.17]"""
-
     def recursive_dls(node, problem, limit):
         if problem.goal_test(node.state):
             return node
@@ -56,7 +54,6 @@ def depth_limited_search(problem, limit=50):
 
 
 def iterative_deepening_search(problem):
-    """[Figure 3.18]"""
     for depth in range(sys.maxsize):
         result = depth_limited_search(problem, depth)
         if result != 'cutoff':

@@ -5,9 +5,11 @@ from classDef import *
 from uninformedSearch import *
 from informedSearch import *
 from customSearch import *
+from GUI import *
 
 filename = sys.argv[1]
 strategy = sys.argv[2]
+display = sys.argv[3]  # Displaying the GUI
 
 
 def parse_input_file(filename):
@@ -64,6 +66,15 @@ for wx, wy in walls:
 
 def runRobotNav():
     problem = RobotNavProblem(init_pos, goal_pos, grid)
+
+    if display == "display":
+
+        root = RobotNavApp()
+
+        grid_display = GridDisplay(root, rows, cols, 50)
+        root.grid_display = grid_display
+
+        root.mainloop
 
     if strategy == "BFS":
         result = breadth_first_graph_search(problem)
