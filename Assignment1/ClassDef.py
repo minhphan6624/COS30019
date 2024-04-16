@@ -37,6 +37,7 @@ class RobotNavProblem(Problem):
             # Check grid bounds and obstacles
             if 0 <= new_x < len(self.grid[0]) and 0 <= new_y < len(self.grid) and self.grid[new_y][new_x] != -1:
                 actions.append((dx, dy))
+
         return actions
 
     def result(self, state, action):

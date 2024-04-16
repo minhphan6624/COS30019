@@ -4,13 +4,18 @@ import tkinter as tk
 class RobotNavApp(tk.Tk):
     def __init__(self):
         super().__init__()
+
         self.title("Robot Navigation")
         self.geometry("920x700")  # Adjust the size as needed
+
+        # self.grid = grid
 
         self.label = tk.Label(self, text="A simple label", font=("Arial", 11))
         self.label.pack()
 
-        self.grid_display = GridDisplay(self, 10, 10)  # 10x10 grid for example
+        # self.grid_display = GridDisplay(
+        #     self, len(self.grid[0]), len(self.grid))  # 10x10 grid for example
+        self.grid_display = GridDisplay(self, 10, 10)
         self.grid_display.pack()
 
         self.control_panel = ControlPanel(self)
@@ -39,6 +44,7 @@ class GridDisplay(tk.Canvas):
     def update_cell(self, x, y, color):
         self.create_rectangle(x*self.size, y*self.size,
                               (x+1)*self.size, (y+1)*self.size, fill=color)
+        self.update()
 
 
 class ControlPanel(tk.Frame):
@@ -57,8 +63,3 @@ class ControlPanel(tk.Frame):
 
     def on_reset(self):
         print("Reset the search and clear the grid")
-
-
-if __name__ == "__main__":
-    app = RobotNavApp()
-    app.mainloop()

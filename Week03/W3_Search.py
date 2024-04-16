@@ -183,8 +183,8 @@ def depth_first_graph_search(problem):
     If two paths reach a state, only use the first one.
     """
     frontier = [(Node(problem.initial))]  # Stack
-
     explored = set()
+
     while frontier:
         node = frontier.pop()
         if problem.goal_test(node.state):

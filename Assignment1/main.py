@@ -9,7 +9,7 @@ from GUI import *
 
 filename = sys.argv[1]
 strategy = sys.argv[2]
-display = sys.argv[3]  # Displaying the GUI
+# display = sys.argv[3]
 
 
 def parse_input_file(filename):
@@ -43,47 +43,17 @@ def parse_input_file(filename):
         return rows, cols, init_pos, goal_pos, walls
 
 
-rows, cols, init_pos, goal_pos, walls = parse_input_file(filename)
-
-grid = [[0 for _ in range(cols)] for _ in range(rows)]
-
-# Marking starting position as 1
-grid[init_pos[1]][init_pos[0]] = 1
-
-# Marking goals as 2
-for gx, gy in goal_pos:
-    grid[gy][gx] = 2
-
-# Marking walls as -1
-for wx, wy in walls:
-    grid[wy][wx] = -1
-
-# # Print the grid for testing
-# def print_grid(grid):
-#     for row in grid:
-#         print(row)
-
-
-def runRobotNav():
+def runRobotNav(init_pos, goal_pos, grid):
     problem = RobotNavProblem(init_pos, goal_pos, grid)
-
-    if display == "display":
-
-        root = RobotNavApp()
-
-        grid_display = GridDisplay(root, rows, cols, 50)
-        root.grid_display = grid_display
-
-        root.mainloop
-
     if strategy == "BFS":
-        result = breadth_first_graph_search(problem)
+        result, nodenum = breadth_first_graph_search(problem)
     if strategy == "DFS":
-        result = depth_first_graph_search(problem)
+        result, nodenum = depth_first_graph_search(problem)
     if strategy == "GBFS":
-        result = best_first_graph_search(problem, lambda n: problem.h(n))
+        result, nodenum = best_first_graph_search(
+            problem, lambda n: problem.h(n))
     if strategy == "AStar":
-        result = astar_search(problem)
+        result, nodenum = astar_search(problem)
     if strategy == "IDS":
         result = iterative_deepening_search(problem)
     if strategy == "RBFS":
@@ -92,7 +62,10 @@ def runRobotNav():
     print(filename + " " + strategy)
 
     if result:
-        print(result, len(result.solution()), sep=" ")
+        if nodenum is not None:
+            print(result, nodenum, sep=" ")
+        else:
+            print(result + " " + len(result.solution(0)))
 
         delta = {
             (0, -1): "UP",
@@ -107,5 +80,26 @@ def runRobotNav():
         print("No goal is reachable " + len(result.solution()))
 
 
-# Program execution
-runRobotNav()
+def main():
+    parse_input_file(filename)
+
+    rows, cols, init_pos, goal_pos, walls = parse_input_file(filename)
+
+    grid = [[0 for _ in range(cols)] for _ in range(rows)]
+
+    # Marking starting position as 1
+    grid[init_pos[1]][init_pos[0]] = 1
+
+    # Marking goals as 2
+    for gx, gy in goal_pos:
+        grid[gy][gx] = 2
+
+    # Marking walls as -1
+    for wx, wy in walls:
+        grid[wy][wx] = -1
+
+    runRobotNav(init_pos, goal_pos, grid)
+
+
+if __name__ == "__main__":
+    main()
