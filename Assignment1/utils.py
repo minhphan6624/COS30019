@@ -777,6 +777,16 @@ class PriorityQueue:
         except ValueError:
             raise KeyError(str(key) + " is not in the priority queue")
         heapq.heapify(self.heap)
+    
+    def __str__(self):
+        """Return a string representation of the priority queue."""
+        return ' '.join([str(item) for _, item in self.heap])
+
+    def print_queue(self):
+        """Print all items in the priority queue."""
+        for priority, item in self.heap:
+            print(f"Priority: {priority}, Item: {item}")
+
 
 
 # ______________________________________________________________________________

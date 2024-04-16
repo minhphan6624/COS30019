@@ -1,6 +1,7 @@
 from utils import *
 import heapq
 from classDef import *
+from collections import deque
 
 
 def best_first_graph_search(problem, f, display=False):
@@ -16,15 +17,11 @@ def best_first_graph_search(problem, f, display=False):
     explored = set()
 
     while frontier:
-        temp = []
-
-        for item in frontier:
-            heapq.heappush(temp, item)
-
-        listtemp = list(temp)
-        print(list)
+        print(frontier, end=" popped ")
 
         node = frontier.pop()
+
+        print(node)
 
         if problem.goal_test(node.state):
             if display:
