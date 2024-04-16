@@ -79,7 +79,7 @@ def runRobotNav(init_pos, goal_pos, grid):
     else:
         print("No goal is reachable " + len(result.solution()))
 
-    print(problem.h(Node(init_pos)))
+    print(problem.h(Node((7, 0))))
 
 
 def main():

@@ -47,7 +47,7 @@ class RobotNavProblem(Problem):
         return super().goal_test(state)
 
     def h(self, node):
-        minn = 0
+        minn = float('inf')
         for goal in self.goal:
             minn = min(minn, manhattan_distance(node.state, goal))
         return minn
