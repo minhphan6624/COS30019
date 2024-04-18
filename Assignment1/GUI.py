@@ -1,21 +1,18 @@
 import tkinter as tk
 
+from uninformedSearch import *
+
 
 class RobotNavApp(tk.Tk):
-    def __init__(self):
+    def __init__(self, grid):
         super().__init__()
 
         self.title("Robot Navigation")
         self.geometry("920x700")  # Adjust the size as needed
+        self.grid = grid
 
-        # self.grid = grid
-
-        self.label = tk.Label(self, text="A simple label", font=("Arial", 11))
-        self.label.pack()
-
-        # self.grid_display = GridDisplay(
-        #     self, len(self.grid[0]), len(self.grid))  # 10x10 grid for example
-        self.grid_display = GridDisplay(self, 10, 10)
+        self.grid_display = GridDisplay(
+            self, len(self.grid), len(self.grid[0]), grid)
         self.grid_display.pack()
 
         self.control_panel = ControlPanel(self)
@@ -28,23 +25,34 @@ class RobotNavApp(tk.Tk):
 
 
 class GridDisplay(tk.Canvas):
-    def __init__(self, parent, rows, cols, size=50):
+    def __init__(self, parent, rows, cols, grid, size=50):
         super().__init__(parent, bg='white', height=rows*size, width=cols*size)
         self.rows = rows
         self.cols = cols
         self.size = size
-        self.draw_grid()
+        self.grid = grid
+        self.draw_init_grid()
 
-    def draw_grid(self):
-        for i in range(self.rows):
-            for j in range(self.cols):
-                self.create_rectangle(j*self.size, i*self.size,
-                                      (j+1)*self.size, (i+1)*self.size, fill='white')
+    def draw_init_grid(self):
+        for y in range(self.rows):
+            for x in range(self.cols):
+                cell_color = 'white'  # Default color for empty cells
+                if self.grid[y][x] == -1:
+                    cell_color = 'grey'  # Wall cells
+                elif self.grid[y][x] == 1:
+                    cell_color = 'red'  # Start positions
+                elif self.grid[y][x] == 2:
+                    cell_color = 'green'  # Goal positions
+
+                self.create_rectangle(x*self.size, y*self.size,
+                                      (x+1)*self.size, (y+1)*self.size, fill=cell_color, outline='black')
 
     def update_cell(self, x, y, color):
-        self.create_rectangle(x*self.size, y*self.size,
-                              (x+1)*self.size, (y+1)*self.size, fill=color)
-        self.update()
+        # self.create_rectangle(x*self.size, y*self.size,
+        #                       (x+1)*self.size, (y+1)*self.size, fill=color)
+        # self.update()
+        self.itemconfig(self.find_closest(
+            (x + 0.5) * self.size, (y + 0.5) * self.size)[0], fill=color)
 
 
 class ControlPanel(tk.Frame):

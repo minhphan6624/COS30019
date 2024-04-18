@@ -33,32 +33,40 @@ from utils import *
 
 #         bound += 1
 
-def depth_limited_search(problem, limit=50):
-
-    def recursive_dls(node, problem, limit):
-        if problem.goal_test(node.state):
-            return node
-        elif limit == 0:
-            return 'cutoff'
-        else:
-            cutoff_occurred = False
-            for child in node.expand(problem):
-                result = recursive_dls(child, problem, limit - 1)
-                if result == 'cutoff':
-                    cutoff_occurred = True
-                elif result is not None:
-                    return result
-            return 'cutoff' if cutoff_occurred else None
-
-    # Body of depth_limited_search:
-    return recursive_dls(Node(problem.initial), problem, limit)
-
-
 def iterative_deepening_search(problem):
+    nodenum = 0
+
+    def depth_limited_search(problem, limit=50):
+
+        def recursive_dls(node, problem, limit):
+            nonlocal nodenum
+            nodenum += 1
+
+            if problem.goal_test(node.state):
+                return node
+            elif limit == 0:
+                return 'cutoff'
+            else:
+                cutoff_occurred = False
+
+                for child in node.expand(problem):
+                    result = recursive_dls(child, problem, limit - 1)
+
+                    if result == 'cutoff':
+                        cutoff_occurred = True
+
+                    elif result is not None:
+                        return result
+                return 'cutoff' if cutoff_occurred else None
+        # Body of depth_limited_search:
+        return recursive_dls(Node(problem.initial), problem, limit)
+
     for depth in range(sys.maxsize):
         result = depth_limited_search(problem, depth)
         if result != 'cutoff':
-            return result
+            break
+
+    return result, nodenum
 
 
 def recursive_best_first_search(problem, h=None):

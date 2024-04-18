@@ -9,19 +9,22 @@ def best_first_graph_search(problem, f, display=False):
     # f(x) will be cached on the nodes as they are computed
     f = memoize(f, 'f')
 
-    node = Node(problem.initial)
+    start = Node(problem.initial)
     nodenum = 1
 
+    if problem.goal_test(start.state):
+        return start, nodenum
+
     frontier = PriorityQueue('min', f)
-    frontier.append(node)
+    frontier.append(start)
     explored = set()
 
     while frontier:
-        print(frontier, end=" popped ")
+        # print(frontier, end=" popped ")
 
         node = frontier.pop()
 
-        print(node)
+        # print(node)
 
         if problem.goal_test(node.state):
             if display:

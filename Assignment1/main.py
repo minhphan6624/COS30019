@@ -9,7 +9,10 @@ from GUI import *
 
 filename = sys.argv[1]
 strategy = sys.argv[2]
-# display = sys.argv[3]
+if len(sys.argv) == 4:
+    all_goals = sys.argv[3]
+else:
+    all_goals = None
 
 
 def parse_input_file(filename):
@@ -31,9 +34,9 @@ def parse_input_file(filename):
         walls = []  # Array of walls
         for line in f:
             parts = line.strip().strip("()").split(',')
+            x, y = int(parts[0]), int(parts[1])
             w, h = int(parts[2]), int(parts[3])
 
-            x, y = int(parts[0]), int(parts[1])
             for i in range(0, w):
                 for j in range(0, h):
                     wall_block = (x + i, y+j)
@@ -44,49 +47,76 @@ def parse_input_file(filename):
 
 
 def runRobotNav(init_pos, goal_pos, grid):
+
     problem = RobotNavProblem(init_pos, goal_pos, grid)
+
     if strategy == "BFS":
         result, nodenum = breadth_first_graph_search(problem)
-    if strategy == "DFS":
+    elif strategy == "DFS":
         result, nodenum = depth_first_graph_search(problem)
-    if strategy == "GBFS":
+    elif strategy == "GBFS":
         result, nodenum = best_first_graph_search(
             problem, lambda n: problem.h(n))
-    if strategy == "AStar":
+    elif strategy == "AStar":
         result, nodenum = astar_search(problem)
-    if strategy == "IDS":
-        result = iterative_deepening_search(problem)
-    if strategy == "RBFS":
+    elif strategy == "IDS":
+        result, nodenum = iterative_deepening_search(problem)
+    elif strategy == "RBFS":
         result = recursive_best_first_search(problem)
+    else:
+        print("Invalid Strategy")
+        return
 
     print(filename + " " + strategy)
 
     if result:
-        if nodenum is not None:
+        if nodenum:
             print(result, nodenum, sep=" ")
-        else:
-            print(result + " " + len(result.solution(0)))
 
-        delta = {
-            (0, -1): "UP",
-            (0, 1): "DOWN",
-            (-1, 0): "LEFT",
-            (1, 0): "RIGHT"
-        }
+            # Print the path to the solution
+            delta = {
+                (0, -1): "UP",
+                (0, 1): "DOWN",
+                (-1, 0): "LEFT",
+                (1, 0): "RIGHT"
+            }
 
-        path = [delta.get(action) for action in result.solution()]
+            path = [delta.get(action) for action in result.solution()]
+            print(path)
+    else:
+        print("No goal is reachable", nodenum)
+
+
+def testing(init_pos, goal_pos, grid):
+    problem = RobotNavProblem(init_pos, goal_pos, grid)
+    if strategy == "BFS":
+        result, path, nodenum = bfs_all_goals(problem)
+    elif strategy == "DFS":
+        result, path, nodenum = dfs_all_goals(problem)
+
+    print(result)
+
+    if result:
+        print(result, nodenum, sep=" ")
+
+        # Print the path to the solution
+        # delta = {
+        #     (0, -1): "UP",
+        #     (0, 1): "DOWN",
+        #     (-1, 0): "LEFT",
+        #     (1, 0): "RIGHT"
+        # }
+
+        # path = [delta.get(action) for action in result.solution()]
         print(path)
     else:
-        print("No goal is reachable " + len(result.solution()))
-
-    print(problem.h(Node((7, 0))))
+        print("No goal is reachable", nodenum)
 
 
 def main():
-    parse_input_file(filename)
-
     rows, cols, init_pos, goal_pos, walls = parse_input_file(filename)
 
+    # initialize the grid
     grid = [[0 for _ in range(cols)] for _ in range(rows)]
 
     # Marking starting position as 1
@@ -100,7 +130,10 @@ def main():
     for wx, wy in walls:
         grid[wy][wx] = -1
 
-    runRobotNav(init_pos, goal_pos, grid)
+    if all_goals:
+        testing(init_pos, goal_pos, grid)
+    else:
+        runRobotNav(init_pos, goal_pos, grid)
 
 
 if __name__ == "__main__":
