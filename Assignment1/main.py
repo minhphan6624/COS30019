@@ -83,6 +83,19 @@ def runRobotNav(init_pos, goal_pos, grid):
 
             path = [delta.get(action) for action in result.solution()]
             print(path)
+        else:
+            print(result)
+
+            # Print the path to the solution
+            delta = {
+                (0, -1): "UP",
+                (0, 1): "DOWN",
+                (-1, 0): "LEFT",
+                (1, 0): "RIGHT"
+            }
+
+            path = [delta.get(action) for action in result.solution()]
+            print(path)
     else:
         print("No goal is reachable", nodenum)
 
