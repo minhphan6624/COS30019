@@ -103,27 +103,20 @@ def runRobotNav(init_pos, goal_pos, grid):
 def testing(init_pos, goal_pos, grid):
     problem = RobotNavProblem(init_pos, goal_pos, grid)
     if strategy == "BFS":
-        result, path, nodenum = bfs_all_goals(problem)
+        path, nodenum = bfs_all_goals(problem)
     elif strategy == "DFS":
-        result, path, nodenum = dfs_all_goals(problem)
+        path, nodenum = dfs_all_goals(problem)
 
-    print(result)
+    delta = {
+        (0, -1): "UP",
+        (0, 1): "DOWN",
+        (-1, 0): "LEFT",
+        (1, 0): "RIGHT"
+    }
 
-    if result:
-        print(result, nodenum, sep=" ")
-
-        # Print the path to the solution
-        # delta = {
-        #     (0, -1): "UP",
-        #     (0, 1): "DOWN",
-        #     (-1, 0): "LEFT",
-        #     (1, 0): "RIGHT"
-        # }
-
-        # path = [delta.get(action) for action in result.solution()]
-        print(path)
-    else:
-        print("No goal is reachable", nodenum)
+    path = [delta.get(action) for action in path]
+    print(path)
+    print(nodenum)
 
 
 def main():
@@ -142,6 +135,9 @@ def main():
     # Marking walls as -1
     for wx, wy in walls:
         grid[wy][wx] = -1
+
+    # for row in grid:
+    #     print(row)
 
     if all_goals:
         testing(init_pos, goal_pos, grid)
