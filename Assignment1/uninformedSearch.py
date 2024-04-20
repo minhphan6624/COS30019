@@ -15,7 +15,7 @@ def breadth_first_graph_search(problem):
     explored = set()
 
     while frontier:
-        print(frontier)
+        # Examine the first node added to the queue
         node = frontier.popleft()
         explored.add(node.state)
 
@@ -23,26 +23,30 @@ def breadth_first_graph_search(problem):
             return node, nodenum
 
         for child in node.expand(problem):
-            if child.state not in explored and child not in frontier:
-                # if problem.goal_test(child.state):
-                #     return child, nodenum + 1
+            if child.state not in explored and child not in frontier:  # Only explore new cells
+                # If a child node is a goal, terminates
+                if problem.goal_test(child.state):
+                    return child, nodenum + 1
+
+                # Otherwise add the child node to frontier
                 frontier.append(child)
                 nodenum += 1
-    return None, nodenum
+    return None, nodenum  # Return none if no goal is reached
 
 
 def depth_first_graph_search(problem):
     start = Node(problem.initial)  # Root node points to the start position
     nodenum = 1
 
-    frontier = [(start)]  # Stack
+    #  Set up the frontier as a stack and a set to keep track of explored nodes
+    frontier = [(start)]
     explored = set()
 
     if problem.goal_test(start.state):  # Check if the agent starts at a goal state
         return start, nodenum
 
     while frontier:
-        print(frontier)
+        # Examine the last node added to the stack
         node = frontier.pop()
         explored.add(node.state)
 
@@ -51,6 +55,11 @@ def depth_first_graph_search(problem):
 
         for child in node.expand(problem):  # Explore the child nodes
             if child.state not in explored and child not in frontier:
+                # If a child node is a goal, terminates
+                if problem.goal_test(child.state):
+                    return child, nodenum + 1
+
+                # Otherwise add the child to the frontier
                 frontier.append(child)
                 nodenum += 1
 
@@ -73,11 +82,12 @@ def bfs_all_goals(problem):
     frontier = deque([start])
     explored = set()
 
+    # Loop until all goals are reached and there's no mode node to be explored
     while frontier and visited_goals != all_goals:
-        print(frontier)
         node = frontier.popleft()
         explored.add(node.state)
 
+        # Add the goal to visited if reached
         if problem.goal_test(node.state) and node.state not in visited_goals:
             visited_goals.add(node.state)
             final_paths = node.solution()
@@ -97,7 +107,7 @@ def bfs_all_goals(problem):
                 nodenum += 1
 
     # Return the full path through all goals and the number of nodes explored
-    return final_paths, nodenum
+    return visited_goals, final_paths, nodenum
 
 
 def dfs_all_goals(problem):
@@ -135,4 +145,4 @@ def dfs_all_goals(problem):
                 frontier.append(child)
                 nodenum += 1
 
-    return final_paths, nodenum  # Return None if not all goals can be reached
+    return visited_goals, final_paths, nodenum

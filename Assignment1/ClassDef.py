@@ -46,10 +46,20 @@ class RobotNavProblem(Problem):
     def goal_test(self, state):
         return super().goal_test(state)
 
+    # Heuristic function to reach a goal
     def h(self, node):
         minn = float('inf')
         for goal in self.goal:
             minn = min(minn, manhattan_distance(node.state, goal))
+        return minn
+
+    def h_all_goals(self, node, visited_goals):
+        current_state = node.state
+        unvisited_goals = set(self.goal) - visited_goals
+
+        minn = float('inf')
+        for goal in unvisited_goals:
+            minn = min(manhattan_distance(current_state, goal))
         return minn
 
 
@@ -82,6 +92,7 @@ class Node:
         # initialize the next node in the search tree
         next_node = Node(next_state, self, action, problem.path_cost(
             self.path_cost, self.state, action, next_state))
+
         return next_node
 
     def expand(self, problem):

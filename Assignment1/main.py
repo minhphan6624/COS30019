@@ -103,9 +103,18 @@ def runRobotNav(init_pos, goal_pos, grid):
 def testing(init_pos, goal_pos, grid):
     problem = RobotNavProblem(init_pos, goal_pos, grid)
     if strategy == "BFS":
-        path, nodenum = bfs_all_goals(problem)
+        goals, path, nodenum = bfs_all_goals(problem)
     elif strategy == "DFS":
-        path, nodenum = dfs_all_goals(problem)
+        goals, path, nodenum = dfs_all_goals(problem)
+    elif strategy == "GBFS":
+        goals, path, nodenum = gbfs_all_goals(problem)
+    elif strategy == "AStar":
+        goals, path, nodenum = astar_all_goals(problem)
+
+    print(filename + " " + strategy)
+
+    print(goals)
+    print(nodenum)
 
     delta = {
         (0, -1): "UP",
@@ -116,7 +125,6 @@ def testing(init_pos, goal_pos, grid):
 
     path = [delta.get(action) for action in path]
     print(path)
-    print(nodenum)
 
 
 def main():

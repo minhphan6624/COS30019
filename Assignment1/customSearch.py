@@ -70,17 +70,22 @@ def iterative_deepening_search(problem):
 
 
 def recursive_best_first_search(problem, h=None):
-    """[Figure 3.26]"""
     h = memoize(h or problem.h, 'h')
 
     def RBFS(problem, node, flimit):
+        # Terminates if a goal is reached
         if problem.goal_test(node.state):
             return node, 0  # (The second value is immaterial)
+
         successors = node.expand(problem)
+
+        # Terminates if a node has no other child node
         if len(successors) == 0:
             return None, np.inf
+
         for s in successors:
             s.f = max(s.path_cost + h(s), node.f)
+
         while True:
             # Order by lowest f value
             successors.sort(key=lambda x: x.f)
@@ -91,7 +96,9 @@ def recursive_best_first_search(problem, h=None):
                 alternative = successors[1].f
             else:
                 alternative = np.inf
+
             result, best.f = RBFS(problem, best, min(flimit, alternative))
+
             if result is not None:
                 return result, best.f
 
