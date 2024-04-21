@@ -14,6 +14,8 @@ if len(sys.argv) == 4:
 else:
     all_goals = None
 
+# Read file input
+
 
 def parse_input_file(filename):
     with open(filename, 'r') as f:
@@ -62,7 +64,7 @@ def runRobotNav(init_pos, goal_pos, grid):
     elif strategy == "IDS":
         result, nodenum = iterative_deepening_search(problem)
     elif strategy == "RBFS":
-        result = recursive_best_first_search(problem)
+        result, nodenum = recursive_best_first_search(problem)
     else:
         print("Invalid Strategy")
         return
@@ -70,37 +72,23 @@ def runRobotNav(init_pos, goal_pos, grid):
     print(filename + " " + strategy)
 
     if result:
-        if nodenum:
-            print(result, nodenum, sep=" ")
+        print(result, nodenum, sep=" ")
 
-            # Print the path to the solution
-            delta = {
-                (0, -1): "UP",
-                (0, 1): "DOWN",
-                (-1, 0): "LEFT",
-                (1, 0): "RIGHT"
-            }
+        # Print the path to the solution
+        delta = {
+            (0, -1): "UP",
+            (0, 1): "DOWN",
+            (-1, 0): "LEFT",
+            (1, 0): "RIGHT"
+        }
 
-            path = [delta.get(action) for action in result.solution()]
-            print(path)
-        else:
-            print(result)
-
-            # Print the path to the solution
-            delta = {
-                (0, -1): "UP",
-                (0, 1): "DOWN",
-                (-1, 0): "LEFT",
-                (1, 0): "RIGHT"
-            }
-
-            path = [delta.get(action) for action in result.solution()]
-            print(path)
+        path = [delta.get(action) for action in result.solution()]
+        print(path)
     else:
         print("No goal is reachable", nodenum)
 
 
-def testing(init_pos, goal_pos, grid):
+def runRobotNavAllGoals(init_pos, goal_pos, grid):
     problem = RobotNavProblem(init_pos, goal_pos, grid)
     if strategy == "BFS":
         goals, path, nodenum = bfs_all_goals(problem)
@@ -113,8 +101,7 @@ def testing(init_pos, goal_pos, grid):
 
     print(filename + " " + strategy)
 
-    print(goals)
-    print(nodenum)
+    print(goals, " ", nodenum)
 
     delta = {
         (0, -1): "UP",
@@ -125,6 +112,7 @@ def testing(init_pos, goal_pos, grid):
 
     path = [delta.get(action) for action in path]
     print(path)
+    print(len(path))
 
 
 def main():
@@ -144,11 +132,8 @@ def main():
     for wx, wy in walls:
         grid[wy][wx] = -1
 
-    # for row in grid:
-    #     print(row)
-
     if all_goals:
-        testing(init_pos, goal_pos, grid)
+        runRobotNavAllGoals(init_pos, goal_pos, grid)
     else:
         runRobotNav(init_pos, goal_pos, grid)
 

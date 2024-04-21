@@ -1,37 +1,9 @@
 import sys
+import numpy as np
 
 from classDef import *
 from utils import *
 
-# def dbsearch(problem, node, bound):
-#     if problem.goal_test(node.state):
-#         return node  # Return the node if goal is found
-#     elif bound == 0:
-#         return "cutoff"  # Terminates if node is at depth bound
-#     elif bound > 0:
-#         cutoff_occurred = False
-#         for child in node.expand(problem):
-
-#             result = dbsearch(problem, child, bound - 1)
-
-#             if result == "cutoff":
-#                 cutoff_occurred == True
-#             elif result is not None:
-#                 return result
-#         return ("cutoff" if cutoff_occurred else None)
-
-
-# def iterative_deepening_search(problem):
-#     bound = 0
-#     root = problem.initial
-
-#     while True:
-#         result = dbsearch(problem, Node(problem.initial), bound)
-
-#         if result != 'cutoff':
-#             return result
-
-#         bound += 1
 
 def iterative_deepening_search(problem):
     nodenum = 0
@@ -55,9 +27,11 @@ def iterative_deepening_search(problem):
                     if result == 'cutoff':
                         cutoff_occurred = True
 
+                    # If there is a result
                     elif result is not None:
                         return result
                 return 'cutoff' if cutoff_occurred else None
+
         # Body of depth_limited_search:
         return recursive_dls(Node(problem.initial), problem, limit)
 
@@ -71,17 +45,20 @@ def iterative_deepening_search(problem):
 
 def recursive_best_first_search(problem, h=None):
     h = memoize(h or problem.h, 'h')
+    nodenum = 0
 
-    def RBFS(problem, node, flimit):
+    def RBFS(problem, node, flimit, nodenum):
+        nodenum += 1
+
         # Terminates if a goal is reached
         if problem.goal_test(node.state):
-            return node, 0  # (The second value is immaterial)
+            return node, 0, nodenum  # (The second value is immaterial)
 
         successors = node.expand(problem)
 
         # Terminates if a node has no other child node
         if len(successors) == 0:
-            return None, np.inf
+            return None, np.inf, nodenum
 
         for s in successors:
             s.f = max(s.path_cost + h(s), node.f)
@@ -89,20 +66,25 @@ def recursive_best_first_search(problem, h=None):
         while True:
             # Order by lowest f value
             successors.sort(key=lambda x: x.f)
+
             best = successors[0]
+
             if best.f > flimit:
-                return None, best.f
+                return None, best.f, nodenum
+
             if len(successors) > 1:
                 alternative = successors[1].f
             else:
                 alternative = np.inf
 
-            result, best.f = RBFS(problem, best, min(flimit, alternative))
+            result, best.f, nodenum = RBFS(
+                problem, best, min(flimit, alternative), nodenum)
 
             if result is not None:
-                return result, best.f
+                return result, best.f, nodenum
 
+    # Body of RBFS
     node = Node(problem.initial)
     node.f = h(node)
-    result, bestf = RBFS(problem, node, np.inf)
-    return result
+    result, bestf, nodenum = RBFS(problem, node, np.inf, nodenum)
+    return result, nodenum

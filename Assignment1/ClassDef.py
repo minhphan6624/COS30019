@@ -54,12 +54,11 @@ class RobotNavProblem(Problem):
         return minn
 
     def h_all_goals(self, node, visited_goals):
-        current_state = node.state
         unvisited_goals = set(self.goal) - visited_goals
 
         minn = float('inf')
         for goal in unvisited_goals:
-            minn = min(manhattan_distance(current_state, goal))
+            minn = min(manhattan_distance(node.state, goal), minn)
         return minn
 
 
