@@ -68,7 +68,7 @@ def runRobotNav(init_pos, goal_pos, grid):
         print("Invalid Strategy")
         return
 
-    print(filename + " " + strategy)
+    print(filename + " " + strategy.upper())
 
     if result:
         print(result, explored_count, sep=" ")
@@ -101,7 +101,7 @@ def runRobotNavAllGoals(init_pos, goal_pos, grid):
         print("Invalid Strategy")
         return
 
-    print(filename + " " + strategy)
+    print(filename + " " + strategy.upper())
 
     print(goals, " ", explored_count)
 

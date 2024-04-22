@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 
-from classDef import *
+from class_def import *
 from utils import *
 
 
