@@ -6,13 +6,13 @@ from utils import *
 
 
 def iterative_deepening_search(problem):
-    nodenum = 0
+    explored_count = 0
 
     def depth_limited_search(problem, limit=50):
 
         def recursive_dls(node, problem, limit):
-            nonlocal nodenum
-            nodenum += 1
+            nonlocal explored_count
+            explored_count += 1
 
             if problem.goal_test(node.state):
                 return node
@@ -40,25 +40,25 @@ def iterative_deepening_search(problem):
         if result != 'cutoff':
             break
 
-    return result, nodenum
+    return result, explored_count
 
 
 def recursive_best_first_search(problem, h=None):
     h = memoize(h or problem.h, 'h')
-    nodenum = 0
+    explored_count = 0
 
-    def RBFS(problem, node, flimit, nodenum):
-        nodenum += 1
+    def RBFS(problem, node, flimit, explored_count):
+        explored_count += 1
 
         # Terminates if a goal is reached
         if problem.goal_test(node.state):
-            return node, 0, nodenum  # (The second value is immaterial)
+            return node, 0, explored_count  # (The second value is immaterial)
 
         successors = node.expand(problem)
 
         # Terminates if a node has no other child node
         if len(successors) == 0:
-            return None, np.inf, nodenum
+            return None, np.inf, explored_count
 
         for s in successors:
             s.f = max(s.path_cost + h(s), node.f)
@@ -70,21 +70,21 @@ def recursive_best_first_search(problem, h=None):
             best = successors[0]
 
             if best.f > flimit:
-                return None, best.f, nodenum
+                return None, best.f, explored_count
 
             if len(successors) > 1:
                 alternative = successors[1].f
             else:
                 alternative = np.inf
 
-            result, best.f, nodenum = RBFS(
-                problem, best, min(flimit, alternative), nodenum)
+            result, best.f, explored_count = RBFS(
+                problem, best, min(flimit, alternative), explored_count)
 
             if result is not None:
-                return result, best.f, nodenum
+                return result, best.f, explored_count
 
     # Body of RBFS
     node = Node(problem.initial)
     node.f = h(node)
-    result, bestf, nodenum = RBFS(problem, node, np.inf, nodenum)
-    return result, nodenum
+    result, bestf, explored_count = RBFS(problem, node, np.inf, explored_count)
+    return result, explored_count

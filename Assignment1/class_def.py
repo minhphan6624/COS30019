@@ -53,6 +53,7 @@ class RobotNavProblem(Problem):
             minn = min(minn, manhattan_distance(node.state, goal))
         return minn
 
+    # Heuristic function to reach all goals
     def h_all_goals(self, node, visited_goals):
         unvisited_goals = set(self.goal) - visited_goals
 
@@ -94,10 +95,12 @@ class Node:
 
         return next_node
 
+    # Return the list of child nodes of states reachable from the current state
     def expand(self, problem):
         return [self.child_node(problem, action)
                 for action in problem.actions(self.state)]
 
+    # The path to reach this node from the root node
     def path(self):
         node, path_back = self, []
         while node:
@@ -105,5 +108,6 @@ class Node:
             node = node.parent
         return list(reversed(path_back))
 
+    # The list of actions taken to reach this node
     def solution(self):
         return [node.action for node in self.path()[1:]]

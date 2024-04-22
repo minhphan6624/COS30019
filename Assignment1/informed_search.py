@@ -10,11 +10,11 @@ def best_first_graph_search(problem, f):
     f = memoize(f or problem.h, 'f')
 
     start = Node(problem.initial)
-    nodenum = 1
+    explored_count = 1
 
     # Check if the robot starts at a goal cell
     if problem.goal_test(start.state):
-        return start, nodenum
+        return start, explored_count
 
     # Set up the frontier
     frontier = PriorityQueue('min', f)
@@ -28,23 +28,23 @@ def best_first_graph_search(problem, f):
 
         # Terminates if a goal is reached
         if problem.goal_test(node.state):
-            return node, nodenum
+            return node, explored_count
 
         for child in node.expand(problem):
             if child.state not in explored and child not in frontier:
                 # If the child node is a goal, terminates
                 if problem.goal_test(child.state):
-                    return child, nodenum + 1
+                    return child, explored_count + 1
 
                 # Otherwise add the child node to frontier
                 frontier.append(child)
-                nodenum += 1
+                explored_count += 1
             elif child in frontier:
                 # Reorder the child in the queue if its current f(x) value is smaller than the f(x) value stored in frontier
                 if f(child) < frontier[child]:
                     del frontier[child]
                     frontier.append(child)
-    return None, nodenum
+    return None, explored_count
 
 
 def astar_search(problem, h=None):
@@ -57,7 +57,7 @@ def astar_search(problem, h=None):
 
 def gbfs_all_goals(problem, f=None):
     start = Node(problem.initial)
-    nodenum = 1
+    explored_count = 1
 
     visited_goals = set()  # Visited goals
     all_goals = set(problem.goal)  # All target goals
@@ -77,10 +77,8 @@ def gbfs_all_goals(problem, f=None):
     explored = set()  # Track visited nodes
 
     while frontier and visited_goals != all_goals:
-        # print(frontier, " popped", end=" ")
         node = frontier.pop()
 
-        # print(node)
         explored.add(node.state)
 
         # Mark the goal as visited
@@ -99,18 +97,18 @@ def gbfs_all_goals(problem, f=None):
         for child in node.expand(problem):
             if child.state not in explored and child not in frontier:
                 frontier.append(child)
-                nodenum += 1
+                explored_count += 1
             elif child in frontier:
                 # Reorder the child in the queue if its current f(x) value is smaller than the f(x) value stored in frontier
                 if f(child) < frontier[child]:
                     del frontier[child]
                     frontier.append(child)
-    return visited_goals, final_paths, nodenum
+    return visited_goals, final_paths, explored_count
 
 
 def astar_all_goals(problem, h=None):
     start = Node(problem.initial)
-    nodenum = 1
+    explored_count = 1
 
     visited_goals = set()  # Visited goals
     all_goals = set(problem.goal)  # All target goals
@@ -131,10 +129,8 @@ def astar_all_goals(problem, h=None):
     explored = set()  # Track visited nodes
 
     while frontier and visited_goals != all_goals:
-        print(frontier, " popped", end=" ")
-        node = frontier.pop()
 
-        print(node)
+        node = frontier.pop()
         explored.add(node.state)
 
         # Mark the goal as visited
@@ -153,10 +149,10 @@ def astar_all_goals(problem, h=None):
         for child in node.expand(problem):
             if child.state not in explored and child not in frontier:
                 frontier.append(child)
-                nodenum += 1
+                explored_count += 1
             elif child in frontier:
                 # Reorder the child in the queue if its current f(x) value is smaller than the f(x) value stored in frontier
                 if f(child) < frontier[child]:
                     del frontier[child]
                     frontier.append(child)
-    return visited_goals, final_paths, nodenum
+    return visited_goals, final_paths, explored_count

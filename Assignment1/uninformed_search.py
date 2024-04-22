@@ -4,11 +4,11 @@ from collections import deque
 
 def breadth_first_graph_search(problem):
     start = Node(problem.initial)  # Root node points to the start position
-    nodenum = 1
+    explored_count = 1
 
     # Check whether the agent starts at a goal state
     if problem.goal_test(start.state):
-        return start, nodenum
+        return start, explored_count
 
     # Set up the frontier as a queue and a set to keep track of explored nodes
     frontier = deque([start])
@@ -20,30 +20,30 @@ def breadth_first_graph_search(problem):
         explored.add(node.state)
 
         if problem.goal_test(node.state):  # Terminate if a goal is reached
-            return node, nodenum
+            return node, explored_count
 
         for child in node.expand(problem):
             if child.state not in explored and child not in frontier:  # Only explore new cells
                 # If a child node is a goal, terminates
                 if problem.goal_test(child.state):
-                    return child, nodenum + 1
+                    return child, explored_count + 1
 
                 # Otherwise add the child node to frontier
                 frontier.append(child)
-                nodenum += 1
-    return None, nodenum  # Return none if no goal is reached
+                explored_count += 1
+    return None, explored_count  # Return none if no goal is reached
 
 
 def depth_first_graph_search(problem):
     start = Node(problem.initial)  # Root node points to the start position
-    nodenum = 1
+    explored_count = 1
 
     #  Set up the frontier as a stack and a set to keep track of explored nodes
     frontier = [(start)]
     explored = set()
 
     if problem.goal_test(start.state):  # Check if the agent starts at a goal state
-        return start, nodenum
+        return start, explored_count
 
     while frontier:
         # Examine the last node added to the stack
@@ -51,24 +51,24 @@ def depth_first_graph_search(problem):
         explored.add(node.state)
 
         if problem.goal_test(node.state):  # Terminate if a goal is reached
-            return node, nodenum+1
+            return node, explored_count+1
 
         for child in node.expand(problem):  # Explore the child nodes
             if child.state not in explored and child not in frontier:
                 # If a child node is a goal, terminates
                 if problem.goal_test(child.state):
-                    return child, nodenum + 1
+                    return child, explored_count + 1
 
                 # Otherwise add the child to the frontier
                 frontier.append(child)
-                nodenum += 1
+                explored_count += 1
 
-    return None, nodenum
+    return None, explored_count
 
 
 def bfs_all_goals(problem):
     start = Node(problem.initial)
-    nodenum = 1
+    explored_count = 1
 
     visited_goals = set()  # Track visited goals
     all_goals = set(problem.goal)  # All target goals
@@ -104,16 +104,16 @@ def bfs_all_goals(problem):
                 #     visited_goals.add(child.state)
                 #     final_paths = child.solution()
                 frontier.append(child)
-                nodenum += 1
+                explored_count += 1
 
     # Return the full path through all goals and the number of nodes explored
-    return visited_goals, final_paths, nodenum
+    return visited_goals, final_paths, explored_count
 
 
 def dfs_all_goals(problem):
 
     start = Node(problem.initial)  # Root node points to the start position
-    nodenum = 1
+    explored_count = 1
 
     visited_goals = set()  # To keep track of all visited goals
     all_goals = set(problem.goal)
@@ -143,6 +143,6 @@ def dfs_all_goals(problem):
         for child in node.expand(problem):
             if child.state not in explored and child not in frontier:
                 frontier.append(child)
-                nodenum += 1
+                explored_count += 1
 
-    return visited_goals, final_paths, nodenum
+    return visited_goals, final_paths, explored_count

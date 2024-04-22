@@ -1,14 +1,13 @@
 import sys
 
 from utils import *
-from classDef import *
-from uninformedSearch import *
-from informedSearch import *
-from customSearch import *
-from GUI import *
+from class_def import *
+from uninformed_search import *
+from informed_search import *
+from custom_search import *
 
 filename = sys.argv[1]
-strategy = sys.argv[2]
+strategy = sys.argv[2].lower()
 if len(sys.argv) == 4:
     all_goals = sys.argv[3]
 else:
@@ -52,19 +51,19 @@ def runRobotNav(init_pos, goal_pos, grid):
 
     problem = RobotNavProblem(init_pos, goal_pos, grid)
 
-    if strategy == "BFS":
-        result, nodenum = breadth_first_graph_search(problem)
-    elif strategy == "DFS":
-        result, nodenum = depth_first_graph_search(problem)
-    elif strategy == "GBFS":
-        result, nodenum = best_first_graph_search(
+    if strategy == "bfs":
+        result, explored_count = breadth_first_graph_search(problem)
+    elif strategy == "dfs":
+        result, explored_count = depth_first_graph_search(problem)
+    elif strategy == "gbfs":
+        result, explored_count = best_first_graph_search(
             problem, lambda n: problem.h(n))
-    elif strategy == "AStar":
-        result, nodenum = astar_search(problem)
-    elif strategy == "IDS":
-        result, nodenum = iterative_deepening_search(problem)
-    elif strategy == "RBFS":
-        result, nodenum = recursive_best_first_search(problem)
+    elif strategy == "astar":
+        result, explored_count = astar_search(problem)
+    elif strategy == "ids":
+        result, explored_count = iterative_deepening_search(problem)
+    elif strategy == "rbfs":
+        result, explored_count = recursive_best_first_search(problem)
     else:
         print("Invalid Strategy")
         return
@@ -72,7 +71,7 @@ def runRobotNav(init_pos, goal_pos, grid):
     print(filename + " " + strategy)
 
     if result:
-        print(result, nodenum, sep=" ")
+        print(result, explored_count, sep=" ")
 
         # Print the path to the solution
         delta = {
@@ -85,23 +84,26 @@ def runRobotNav(init_pos, goal_pos, grid):
         path = [delta.get(action) for action in result.solution()]
         print(path)
     else:
-        print("No goal is reachable", nodenum)
+        print("No goal is reachable", explored_count)
 
 
 def runRobotNavAllGoals(init_pos, goal_pos, grid):
     problem = RobotNavProblem(init_pos, goal_pos, grid)
-    if strategy == "BFS":
-        goals, path, nodenum = bfs_all_goals(problem)
-    elif strategy == "DFS":
-        goals, path, nodenum = dfs_all_goals(problem)
-    elif strategy == "GBFS":
-        goals, path, nodenum = gbfs_all_goals(problem)
-    elif strategy == "AStar":
-        goals, path, nodenum = astar_all_goals(problem)
+    if strategy == "bfs":
+        goals, path, explored_count = bfs_all_goals(problem)
+    elif strategy == "dfs":
+        goals, path, explored_count = dfs_all_goals(problem)
+    elif strategy == "gbfs":
+        goals, path, explored_count = gbfs_all_goals(problem)
+    elif strategy == "astar":
+        goals, path, explored_count = astar_all_goals(problem)
+    else:
+        print("Invalid Strategy")
+        return
 
     print(filename + " " + strategy)
 
-    print(goals, " ", nodenum)
+    print(goals, " ", explored_count)
 
     delta = {
         (0, -1): "UP",
@@ -132,7 +134,7 @@ def main():
     for wx, wy in walls:
         grid[wy][wx] = -1
 
-    if all_goals:
+    if all_goals == "all_goals":
         runRobotNavAllGoals(init_pos, goal_pos, grid)
     else:
         runRobotNav(init_pos, goal_pos, grid)
