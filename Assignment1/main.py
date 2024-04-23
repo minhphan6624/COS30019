@@ -14,8 +14,6 @@ else:
     all_goals = None
 
 # Read file input
-
-
 def parse_input_file(filename):
     with open(filename, 'r') as f:
         # Read map size
@@ -48,8 +46,9 @@ def parse_input_file(filename):
 
 
 def runRobotNav(init_pos, goal_pos, grid):
-
+    #Problem initialization
     problem = RobotNavProblem(init_pos, goal_pos, grid)
+
 
     if strategy == "bfs":
         result, explored_count = breadth_first_graph_search(problem)
@@ -68,6 +67,7 @@ def runRobotNav(init_pos, goal_pos, grid):
         print("Invalid Strategy")
         return
 
+    # Output result
     print(filename + " " + strategy.upper())
 
     if result:

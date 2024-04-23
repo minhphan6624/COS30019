@@ -84,9 +84,7 @@ def gbfs_all_goals(problem, f=None):
         # Mark the goal as visited
         if problem.goal_test(node.state) and node.state not in visited_goals:
             visited_goals.add(node.state)
-
-            # final_paths.extend(node.solution())
-            final_paths = node.solution()
+            final_paths = node.solution() #Replace final path with the path to this goal
 
             # Reset the search from the current goal
             frontier = PriorityQueue('min', f)
